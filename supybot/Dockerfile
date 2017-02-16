@@ -2,8 +2,10 @@ FROM python:2.7
 
 MAINTAINER David Pose Fernández <dpose@bitergia.com>
 
+ENV SUPYBOT_USER owlbot
+
 # add our user and group first
-RUN useradd -d /home/bitergia/ -m -s /bin/bash -U bitergia
+RUN useradd -d /home/${SUPYBOT_USER}/ -m -s /bin/bash -U ${SUPYBOT_USER}
 
 # supybot (v0.83.4.1)
 RUN git clone https://github.com/Supybot/Supybot.git && \
@@ -13,7 +15,11 @@ RUN git clone https://github.com/Supybot/Supybot.git && \
     cd .. && \
     rm -rf Supybot
 
-USER bitergia
-WORKDIR /home/bitergia
+USER ${SUPYBOT_USER}
+WORKDIR /home/${SUPYBOT_USER}
 
-CMD ["supybot -d supybot.conf"]
+COPY docker-entrypoint.sh /
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["supybot"]
